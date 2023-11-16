@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@clerk/clerk-js": "^4.65.1"
+  }
+}
