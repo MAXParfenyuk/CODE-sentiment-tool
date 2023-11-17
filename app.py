@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 from authlib.integrations.flask_client import OAuth
 import re
+import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -8,6 +9,11 @@ from sklearn.svm import SVC
 import joblib
 import os
 from dotenv import load_dotenv
+
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt')
 
 # Load environment variables from .env file
 load_dotenv()
