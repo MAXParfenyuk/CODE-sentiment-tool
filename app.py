@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 from authlib.integrations.flask_client import OAuth
 import re
 import nltk
-from nltk.corpus import stopwords
+from nltk.corpus import stopwords as nltk_stopwords
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import SVC
@@ -17,6 +17,12 @@ try:
     nltk.data.find('tokenizers/punkt')
 except LookupError:
     nltk.download('punkt', download_dir='/app/nltk_data/')
+
+# Download NLTK stopwords for the sentiment-ai project
+try:
+    nltk.data.find('corpora/stopwords')
+except LookupError:
+    nltk.download('stopwords', download_dir='/app/nltk_data/')
 
 # Load environment variables from .env file
 load_dotenv()
@@ -45,7 +51,7 @@ tfidf = joblib.load('ml_model/tfidf_vectorizer.pkl')
 def preprocess_text(text):
     text = re.sub(r'[^\w\s]', '', text)  # Remove punctuation
     text = text.lower()  # Convert text to lowercase
-    stop_words = set(stopwords.words('english'))
+    stop_words = set(nltk_stopwords.words('english'))  # Using NLTK stop words
     word_tokens = word_tokenize(text)
     filtered_text = ' '.join([word for word in word_tokens if word not in stop_words])  # Remove stopwords
     return filtered_text
