@@ -75,4 +75,6 @@ def predict_sentiment():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Use the provided PORT environment variable from Heroku or 5000 if it's not set
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
