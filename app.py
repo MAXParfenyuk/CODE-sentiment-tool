@@ -10,10 +10,13 @@ import joblib
 import os
 from dotenv import load_dotenv
 
+# Explicitly set the NLTK data directory
+nltk.data.path.append('/app/nltk_data/')  # Set the path to a writable directory on Heroku
+
 try:
     nltk.data.find('tokenizers/punkt')
 except LookupError:
-    nltk.download('punkt')
+    nltk.download('punkt', download_dir='/app/nltk_data/')
 
 # Load environment variables from .env file
 load_dotenv()
