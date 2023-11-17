@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 from authlib.integrations.flask_client import OAuth
 import re
 import nltk
-from nltk.corpus import stopwords as nltk_stopwords
+from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import SVC
@@ -10,15 +10,15 @@ import joblib
 import os
 from dotenv import load_dotenv
 
-# Explicitly set the NLTK data directory
-nltk.data.path.append('/app/nltk_data/')  # Set the path to a writable directory on Heroku
+# Set up NLTK data directory
+nltk.data.path.append('/app/nltk_data/')
 
+# Download NLTK resources if not present
 try:
     nltk.data.find('tokenizers/punkt')
 except LookupError:
     nltk.download('punkt', download_dir='/app/nltk_data/')
 
-# Download NLTK stopwords for the sentiment-ai project
 try:
     nltk.data.find('corpora/stopwords')
 except LookupError:
@@ -49,9 +49,8 @@ tfidf = joblib.load('ml_model/tfidf_vectorizer.pkl')
 
 # Text preprocessing function
 def preprocess_text(text):
-    text = re.sub(r'[^\w\s]', '', text)  # Remove punctuation
-    text = text.lower()  # Convert text to lowercase
-    stop_words = set(nltk_stopwords.words('english'))  # Using NLTK stop words
+    text = re.sub(r'[^\w\s]', '', text.lower())  # Remove punctuation and convert to lowercase
+    stop_words = set(stopwords.words('english'))  # Using NLTK stop words
     word_tokens = word_tokenize(text)
     filtered_text = ' '.join([word for word in word_tokens if word not in stop_words])  # Remove stopwords
     return filtered_text
@@ -63,8 +62,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-    # Clear the session and log the user out from Auth0
-    session.clear()
+    session.clear()  # Clear the session and log the user out from Auth0
     return redirect(oauth.auth0.end_session_url)
 
 @app.route('/auth0/callback')

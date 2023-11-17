@@ -1,4 +1,3 @@
-# Import necessary libraries
 import pandas as pd
 import re
 import nltk
@@ -10,6 +9,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import SVC
 from sklearn.metrics import confusion_matrix
+import joblib
+
+# Load NLTK resources
+nltk.download('punkt')
+nltk.download('stopwords')
 
 # Load the dataset
 dataset = pd.read_csv('IMDB Dataset.csv')
@@ -20,18 +24,16 @@ print(dataset.columns)
 print(dataset.shape)
 print(dataset.isnull().sum())
 
-nltk.download('punkt')
-nltk.download('stopwords')
 # Handle missing values
 dataset.dropna(inplace=True)
 
-# Text preprocessing
+# Text preprocessing function
 def preprocess_text(text):
-    text = re.sub(r'[^\w\s]', '', text)  # Remove punctuation
-    text = text.lower()  # Convert text to lowercase
+    text = re.sub(r'[^\w\s]', '', text.lower())  # Remove punctuation and convert to lowercase
     text = ' '.join([word for word in word_tokenize(text) if word not in stopwords.words('english')])  # Remove stopwords
     return text
 
+# Apply text preprocessing to the dataset
 dataset['cleaned_reviews'] = dataset['review'].apply(preprocess_text)
 
 # Split the dataset
@@ -70,8 +72,6 @@ plt.xlabel('Predicted Label')
 plt.ylabel('True Label')
 plt.title('Confusion Matrix')
 plt.show()
-
-import joblib
 
 # Save the trained models
 joblib.dump(model, 'svm_model.pkl')
